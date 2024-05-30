@@ -8,6 +8,22 @@ LabelConvertDecimal:
     inc ecx
     jmp LabelConvertDecimal
 
+LabelConvertDecimal:
+    mov al, byte ptr[ecx]
+    test al, al
+    jz LabelEndConvert
+    sub al, '0'
+    imul ebx, 10
+    add ebx, eax
+    inc ecx
+    jmp LabelConvertDecimal
+
+LabelEndConvert:
+    test negative, 1
+    jz LabelEnd3
+    neg ebx
+    LabelEnd3:
+    mov decimal_num, ebx
 
     int* argument = (int*)malloc(sizeof(int) * n * 2);
     int* function = (int*)malloc(sizeof(int) * n * 2);
