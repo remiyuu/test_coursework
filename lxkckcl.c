@@ -1,32 +1,13 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+LabelConvertDecimal:
+    mov al, byte ptr[ecx]
+    test al, al
+    jz LabelEndConvert
+    sub al, '0'
+    imul ebx, 10
+    add ebx, eax
+    inc ecx
+    jmp LabelConvertDecimal
 
-#define _CRT_SECURE_NO_WARNINGS
-
-int main() {
-    int a, b, c, d, e, n, h;
-
-    printf("enter a: ");
-    scanf("%d", &a);
-
-    printf("enter b: ");
-    scanf("%d", &b);
-
-    printf("enter c: ");
-    scanf("%d", &c);
-
-    printf("enter d: ");
-    scanf("%d", &d);
-
-    printf("enter e: ");
-    scanf("%d", &e);
-
-    printf("\nenter amount of iterations: ");
-    scanf("%d", &n);
-
-    printf("\nenter step h: ");
-    scanf("%d", &h);
 
     int* argument = (int*)malloc(sizeof(int) * n * 2);
     int* function = (int*)malloc(sizeof(int) * n * 2);
