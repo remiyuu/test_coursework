@@ -212,3 +212,137 @@ void main(void) {
         printf("Decimal equivalent = %d\n", decimal_num);
     }
 }
+
+
+To convert the string `src_num` to an integer using assembly language, you can use a loop to process each character in the string. Here's how you can modify the program to do this:
+
+```c
+#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_NONSTDC_NO_WARNINGS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <stdbool.h>
+
+void main(void) {
+    char src_num[] = "-15678";
+    char res_num[50];
+    int num = 0;
+    char* pstr;
+    char digit;
+    bool negative = false;
+    int decimal_num = 0; // new variable to store the decimal number
+
+    pstr = src_num;
+
+    __asm {
+        push eax;
+        push ebx;
+        push ecx;
+        push edx;
+
+        mov num, 0
+            lea eax, src_num
+            mov pstr, eax
+
+            LabelStart1 :
+        // Проверка конца строки
+        mov eax, pstr
+            mov cl, byte ptr[eax]
+            cmp cl, '-'
+            jne LabelContinueCalc
+            mov negative, 1
+            jmp LabelNextChar
+            LabelContinueCalc :
+        test cl, cl
+            je LabelEnd1
+            // Преобразование символа в число
+            cmp cl, '0'
+            jl LabelNextChar
+            cmp cl, '8'
+            jg LabelNextChar
+            sub cl, '0'
+            mov digit, cl
+            // Формирование числа num
+            mov eax, num
+            mov ebx, 9
+            mul ebx
+            xor ebx, ebx
+            mov bl, digit
+            add eax, ebx
+            mov num, eax
+            // Переход к следующему символу строки
+            LabelNextChar :
+        inc pstr
+            jmp LabelStart1
+
+            LabelEnd1 :
+        // Преобразование числа в строку
+        lea eax, res_num;
+        add eax, 49;
+        mov pstr, eax;
+        mov byte ptr[eax], 0;
+
+    LabelStart2:
+        // Проверка окончания цикла
+        cmp num, 0
+            jle LabelEnd2
+            // Получение младшей цифры числа
+            mov eax, num
+            xor edx, edx
+            mov ebx, 2
+            div ebx
+            mov num, eax
+
+            // Преобразование цифры в символ
+            add dl, '0'
+            mov digit, dl
+            dec pstr
+            mov eax, pstr
+            mov byte ptr[eax], dl
+
+            jmp LabelStart2;
+
+    LabelEnd2:
+        // Convert src_num to an integer and store it in decimal_num
+        mov eax, 0
+        mov ebx, 1
+        lea ecx, src_num
+        cmp byte ptr[ecx], '-'
+        jne LabelConvertDecimal
+        mov negative, 1
+        inc ecx
+        LabelConvertDecimal:
+        mov al, byte ptr[ecx]
+        test al, al
+        jz LabelEndConvert
+        sub al, '0'
+        imul ebx, 10
+        add eax, ebx
+        mov ebx, eax
+        inc ecx
+        jmp LabelConvertDecimal
+        LabelEndConvert:
+        test negative, 1
+        jz LabelEnd3
+        neg ebx
+        LabelEnd3:
+        mov decimal_num, ebx
+
+        pop edx;
+        pop ecx;
+        pop ebx;
+        pop eax;
+    }
+
+    printf("9 -> 2\nsource = %d (decimal)\n", decimal_num); // print the decimal number
+    for (int i = 0; src_num[i] != '\0'; i++) {
+        printf("%c", src_num[i]);
+    }
+    printf("\nresult = ");
+    printf(negative ? "-%s\n" : "%s\n", pstr);
+}
+```
+
+In this modified program, the assembly language code converts the string `src_num` to an integer and stores it in `decimal_num`. The code uses a loop (`LabelConvertDecimal`) to process each character in the string, multiplying the current value of `decimal_num` by 10 and adding the value of the current character. If the string starts with a '-' character, the code sets the `negative` flag to true and skips the first character. After the loop, if the `negative` flag is true, the code negates the value of `decimal_num`.
