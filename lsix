@@ -1,0 +1,28 @@
+#define CALCULATE(a, b, d, e, ci_array, yi_array) \
+    __asm push eax \
+    __asm push ebx \
+    __asm push edx \
+    __asm push esi \
+    __asm push ecx \
+    __asm mov eax, a \
+    __asm mov ebx, b \
+    __asm mov edx, d \
+    __asm mov esi, e \
+    __asm xor ecx, ecx \
+    __asm L1: \
+        __asm cmp ecx, 5 \
+        __asm jge L2 \
+        __asm mov eax, ecx \
+        __asm mov edi, 8 \
+        __asm mul edi \
+        __asm add eax, a \
+        __asm mov esi, eax \
+        __asm mov [ci_array + ecx * 4], esi \
+        __asm inc ecx \
+        __asm jmp L1 \
+    __asm L2: \
+        __asm pop ecx \
+        __asm pop esi \
+        __asm pop edx \
+        __asm pop ebx \
+        __asm pop eax
