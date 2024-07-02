@@ -1,0 +1,90 @@
+#define CALCULATE(a, b, d, e, ci_array, yi_array) \
+    __asm push eax \
+    __asm push ebx \
+    __asm push edx \
+    __asm push esi \
+    __asm push ecx \
+    __asm mov eax, a \
+    __asm mov ebx, b \
+    __asm mov edx, d \
+    __asm mov esi, e \
+    __asm xor ecx, ecx \
+    __asm L1: \
+        __asm cmp ecx, 5 \
+        __asm jge L2 \
+        __asm mov eax, ecx \
+        __asm mov edi, 8 \
+        __asm mul edi \
+        __asm add eax, ecx \
+        __asm mov esi, eax \
+        __asm cmp esi, 99 \
+        __asm jg skip_ci_1_5 \
+        __asm mov edi, ecx \
+        __asm dec edi \
+        __asm mov [ci_array + edi * 4], esi \
+        __asm skip_ci_1_5: \
+        __asm mov edi, ecx \
+        __asm dec edi \
+        __asm mov edi, [ci_array + edi * 4] \
+        __asm mul a \
+        __asm mov edx, eax \
+        __asm mov eax, d \
+        __asm mul b \
+        __asm add edx, eax \
+        __asm sub edx, esi \
+        __asm mov [yi_array + ecx * 4], edx \
+        __asm inc ecx \
+        __asm jmp L1 \
+    __asm L2: \
+        __asm cmp ecx, 10 \
+        __asm jge L3 \
+        __asm mov eax, ecx \
+        __asm mov edi, 9 \
+        __asm mul edi \
+        __asm add eax, 14 \
+        __asm mov esi, eax \
+        __asm cmp esi, 99 \
+        __asm jg skip_ci_6_10 \
+        __asm mov edi, ecx \
+        __asm dec edi \
+        __asm mov [ci_array + edi * 4], esi \
+        __asm skip_ci_6_10: \
+        __asm mov edi, ecx \
+        __asm dec edi \
+        __asm mov edi, [ci_array + edi * 4] \
+        __asm mul a \
+        __asm mov edx, eax \
+        __asm mov eax, d \
+        __asm mul b \
+        __asm add edx, eax \
+        __asm sub edx, esi \
+        __asm mov [yi_array + ecx * 4], edx \
+        __asm inc ecx \
+        __asm jmp L2 \
+    __asm L3: \
+        __asm pop ecx \
+        __asm pop esi \
+        __asm pop edx \
+        __asm pop ebx \
+        __asm pop eax
+
+int main() {
+
+    int a = 2, b = 3, d = 5, e = 7;
+
+    int ci[10] = { 0 }, yi[10] = { 0 };
+
+    CALCULATE(a, b, d, e, ci, yi);
+
+    printf("table y = f(a, b, c, d, e)\n");
+    printf("a = %d, b = %d, d = %d, e = %d\n", a, b, d, e);
+    printf("-------------------------\n");
+    printf("ci         |  yi       \n");
+    printf("-------------------------\n");
+    for (int i = 0; i < 9; i++) {
+        printf("%10d | %10d\n", ci[i], yi[i]);
+    }
+    getchar();
+
+    return 0;
+}
